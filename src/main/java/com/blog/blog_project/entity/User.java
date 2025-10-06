@@ -54,9 +54,8 @@ public class User implements UserDetails{
     @Override
     public boolean equals (Object user) {
         if (this == user) return true;
-        if (!(user instanceof User)) return false;
+        if (!(user instanceof User paramUser)) return false;
 
-        User paramUser = (User) user;
         return Objects.equals(this.id, paramUser.id) && Objects.equals(this.email, paramUser.email);
     }
 
@@ -69,11 +68,6 @@ public class User implements UserDetails{
     public String toString() {
         return "id=%d\temail=%s\tfullName=%s".formatted(this.id, this.email,
                                                             this.fullName);
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
     }
 
     @Override

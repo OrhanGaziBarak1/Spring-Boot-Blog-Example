@@ -22,7 +22,6 @@ public class AuthenticationController {
     private final AuthenticationService authService;
 
     @PostMapping("/register")
-    @Transactional
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDTO request) {
         try {
            AuthenticationDTO response = authService.register(request);

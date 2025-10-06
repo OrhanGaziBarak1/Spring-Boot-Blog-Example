@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            ArticleNotFoundException.class
+    })
     public ResponseEntity<?> handleValidationExceptions (
         MethodArgumentNotValidException ex
     ) {

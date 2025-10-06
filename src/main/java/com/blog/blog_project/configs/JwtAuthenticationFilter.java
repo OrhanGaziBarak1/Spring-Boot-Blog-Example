@@ -1,5 +1,6 @@
 package com.blog.blog_project.configs;
 
+import com.blog.blog_project.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +28,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -61,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // -> Kullanıcı henüz sisteme giriş yapmamış demek
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Veritabanından kullanıcı bilgilerini al
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
 
             // 5. ADIM: Token geçerli mi kontrol et
             if (jwtService.isTokenValid(jwt, userDetails)) {
