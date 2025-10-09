@@ -2,66 +2,15 @@ package com.blog.blog_project.services;
 
 import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
-import com.blog.blog_project.entity.Article;
-import com.blog.blog_project.exception.ArticleNotFoundException;
-import com.blog.blog_project.repository.ArticleRepository;
-import com.blog.blog_project.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-public class ArticleService {
-
-    private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
-
+public interface ArticleService {
     @Transactional
-    public ArticleDTO create(ArticleCreateDTO request) {
-        Article article = new Article();
+    ArticleDTO create(ArticleCreateDTO request);
 
-        article.setContent(request.getContent());
-        article.setAuthorId(request.getAuthorId());
-        article.setCreatedAt(new Date());
+    ArticleDTO getOne(String id);
 
-        Article savedArticle = articleRepository.save(article);
-
-        return new ArticleDTO(
-                savedArticle.getContent(),
-                savedArticle.getId(),
-                savedArticle.getCreatedAt(),
-                savedArticle.getUpdatedAt(),
-                savedArticle.getAuthorId()
-        );
-    }
-
-    public ArticleDTO getOne(String id) {
-        return articleRepository.findById(id)
-                .map(article -> new ArticleDTO(
-                        article.getContent(),
-                        article.getId(),
-                        article.getCreatedAt(),
-                        article.getUpdatedAt(),
-                        article.getAuthorId()
-                ))
-                .orElseThrow(() -> new ArticleNotFoundException(id));
-    }
-
-    public List<ArticleDTO> getArticlesByAuthor(long authorId) {
-        List<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId);
-        return articles.stream().map(article -> new ArticleDTO(
-                article.getContent(),
-                article.getId(),
-                article.getCreatedAt(),
-                article.getUpdatedAt(),
-                article.getAuthorId()
-                )).collect(Collectors.toList());
-    }
-
+    List<ArticleDTO> getArticlesByAuthor(long authorId);
 }
