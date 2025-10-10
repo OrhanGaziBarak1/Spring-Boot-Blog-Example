@@ -7,6 +7,7 @@ import com.blog.blog_project.dto.PagedResponseDTO;
 import com.blog.blog_project.entity.Article;
 import com.blog.blog_project.exception.ArticleNotFoundException;
 import com.blog.blog_project.exception.UnauthorizedArticleAccessException;
+import com.blog.blog_project.mapper.ArticleMapper;
 import com.blog.blog_project.repository.ArticleRepository;
 import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.ArticleService;
@@ -27,6 +28,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
+    private final ArticleMapper articleMapper;
 
     @Transactional
     @Override
@@ -39,25 +41,13 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article savedArticle = articleRepository.save(article);
 
-        return new ArticleDTO(
-                savedArticle.getContent(),
-                savedArticle.getId(),
-                savedArticle.getCreatedAt(),
-                savedArticle.getUpdatedAt(),
-                savedArticle.getAuthorId()
-        );
+        return articleMapper.toDTO(savedArticle);
     }
 
     @Override
     public ArticleDTO getOne(String id) {
         return articleRepository.findByIdAndIsDeletedFalse(id)
-                .map(article -> new ArticleDTO(
-                        article.getContent(),
-                        article.getId(),
-                        article.getCreatedAt(),
-                        article.getUpdatedAt(),
-                        article.getAuthorId()
-                ))
+                .map(articleMapper::toDTO)
                 .orElseThrow(() -> new ArticleNotFoundException(id));
     }
 
@@ -67,25 +57,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
 
-        List<ArticleDTO> articleDTOS = articles.getContent().stream()
-                .map(article -> new ArticleDTO(
-                        article.getContent(),
-                        article.getId(),
-                        article.getCreatedAt(),
-                        article.getUpdatedAt(),
-                        article.getAuthorId()
-                )).toList();
+        List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent());
 
-        return new PagedResponseDTO<>(
-                articleDTOS,
-                articles.getNumber(),
-                articles.getSize(),
-                articles.getTotalElements(),
-                articles.getTotalPages(),
-                articles.isFirst(),
-                articles.isLast(),
-                articles.isEmpty()
-        );
+        return PagedResponseDTO.from(articles, articleDTOList);
     }
 
     @Transactional
@@ -99,13 +73,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article updatedArticle = articleRepository.save(article);
 
-        return new ArticleDTO(
-                updatedArticle.getContent(),
-                updatedArticle.getId(),
-                updatedArticle.getCreatedAt(),
-                updatedArticle.getUpdatedAt(),
-                updatedArticle.getAuthorId()
-        );
+        return articleMapper.toDTO(updatedArticle);
     }
 
     @Override
