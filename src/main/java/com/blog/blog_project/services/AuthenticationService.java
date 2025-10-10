@@ -10,4 +10,6 @@ public interface AuthenticationService {
     AuthenticationDTO register(RegisterDTO request);
 
     AuthenticationDTO login(LoginDTO request);
+
+    void checkAuthor(Long id);
 }

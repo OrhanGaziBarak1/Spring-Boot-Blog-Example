@@ -3,6 +3,7 @@ package com.blog.blog_project.services.impl;
 import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
 import com.blog.blog_project.dto.ArticleUpdateDTO;
+import com.blog.blog_project.dto.PagedResponseDTO;
 import com.blog.blog_project.entity.Article;
 import com.blog.blog_project.exception.ArticleNotFoundException;
 import com.blog.blog_project.exception.UnauthorizedArticleAccessException;
@@ -11,11 +12,14 @@ import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.ArticleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,15 +62,30 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByAuthor(long authorId) {
-        List<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId);
-        return articles.stream().map(article -> new ArticleDTO(
-                article.getContent(),
-                article.getId(),
-                article.getCreatedAt(),
-                article.getUpdatedAt(),
-                article.getAuthorId()
-                )).collect(Collectors.toList());
+    public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
+
+        List<ArticleDTO> articleDTOS = articles.getContent().stream()
+                .map(article -> new ArticleDTO(
+                        article.getContent(),
+                        article.getId(),
+                        article.getCreatedAt(),
+                        article.getUpdatedAt(),
+                        article.getAuthorId()
+                )).toList();
+
+        return new PagedResponseDTO<>(
+                articleDTOS,
+                articles.getNumber(),
+                articles.getSize(),
+                articles.getTotalElements(),
+                articles.getTotalPages(),
+                articles.isFirst(),
+                articles.isLast(),
+                articles.isEmpty()
+        );
     }
 
     @Transactional

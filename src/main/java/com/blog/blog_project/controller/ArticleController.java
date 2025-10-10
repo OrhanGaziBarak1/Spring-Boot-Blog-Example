@@ -3,16 +3,15 @@ package com.blog.blog_project.controller;
 import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
 import com.blog.blog_project.dto.ArticleUpdateDTO;
+import com.blog.blog_project.dto.PagedResponseDTO;
 import com.blog.blog_project.entity.User;
 import com.blog.blog_project.services.ArticleService;
+import com.blog.blog_project.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/article")
@@ -20,6 +19,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create (@Valid @RequestBody ArticleCreateDTO request) {
@@ -28,9 +28,22 @@ public class ArticleController {
     }
 
     @GetMapping("/get-articles")
-    public ResponseEntity<?> getArticles(@AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<?> getArticles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User currentUser) {
         Long userId = currentUser.getId();
-        List<ArticleDTO> articles = articleService.getArticlesByAuthor(userId);
+        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(userId, page, size);
+        return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/get-articles/{id}")
+    public ResponseEntity<?> getArticlesByAuthor(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable Long id) {
+        authenticationService.checkAuthor(id);
+        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(id, page, size);
         return ResponseEntity.ok(articles);
     }
 

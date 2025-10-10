@@ -9,7 +9,8 @@ import com.blog.blog_project.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
     Optional <User> findByEmail(String email);
-    boolean existsByEmail(String email);
     Optional <User> findByUsername(String username);
+    Optional <User> findById(Long id);
 
+    boolean existsByEmail(String email);
 }

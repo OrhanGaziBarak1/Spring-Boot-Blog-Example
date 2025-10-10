@@ -4,6 +4,7 @@ import com.blog.blog_project.dto.AuthenticationDTO;
 import com.blog.blog_project.dto.LoginDTO;
 import com.blog.blog_project.dto.RegisterDTO;
 import com.blog.blog_project.entity.User;
+import com.blog.blog_project.exception.AuthorNotFoundException;
 import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.AuthenticationService;
 import com.blog.blog_project.services.JwtService;
@@ -54,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 )
         );
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new RuntimeException("User not found!"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AuthorNotFoundException(request.getEmail()));
 
         String token = jwtService.generateToken(user);
 
@@ -64,5 +65,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 token
         );
 
+    }
+
+    @Override
+    public void checkAuthor(Long id) {
+        if (!(userRepository.findById(id).isPresent())) throw new AuthorNotFoundException(id);
     }
 }
