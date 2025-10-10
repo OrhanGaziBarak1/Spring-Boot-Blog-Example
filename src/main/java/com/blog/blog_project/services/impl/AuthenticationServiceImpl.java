@@ -69,6 +69,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void checkAuthor(Long id) {
-        if (!(userRepository.findById(id).isPresent())) throw new AuthorNotFoundException(id);
+        if (!(userRepository.existsById(id))) throw new AuthorNotFoundException(id);
     }
 }
