@@ -70,6 +70,12 @@ public class User implements UserDetails{
                                                             this.fullName);
     }
 
+    //This getter should return email for jwt authentication dont remove it.
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

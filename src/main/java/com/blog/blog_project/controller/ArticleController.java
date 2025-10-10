@@ -2,6 +2,7 @@ package com.blog.blog_project.controller;
 
 import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
+import com.blog.blog_project.dto.ArticleUpdateDTO;
 import com.blog.blog_project.entity.User;
 import com.blog.blog_project.services.ArticleService;
 import jakarta.validation.Valid;
@@ -22,22 +23,8 @@ public class ArticleController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create (@Valid @RequestBody ArticleCreateDTO request) {
-        try{
-            ArticleDTO response = articleService.create(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        }
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<?> getOne(@RequestParam(value = "id", required = true) String id) {
-        try{
-            ArticleDTO response = articleService.getOne(id);
-            return ResponseEntity.ok(response);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        }
+        ArticleDTO response = articleService.create(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/get-articles")
@@ -45,5 +32,32 @@ public class ArticleController {
         Long userId = currentUser.getId();
         List<ArticleDTO> articles = articleService.getArticlesByAuthor(userId);
         return ResponseEntity.ok(articles);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOne(@PathVariable String id) {
+        ArticleDTO response = articleService.getOne(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateArticle(
+            @PathVariable String id,
+            @Valid @RequestBody ArticleUpdateDTO request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        articleService.checkAuthority(currentUser.getId(), id);
+        ArticleDTO response = articleService.update(request, id);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(
+            @PathVariable String id,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        articleService.checkAuthority(currentUser.getId(), id);
+        articleService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }
