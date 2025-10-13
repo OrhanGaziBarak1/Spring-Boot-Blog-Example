@@ -1,9 +1,6 @@
 package com.blog.blog_project.entity;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,6 +27,9 @@ public class User implements UserDetails{
     @Setter(AccessLevel.PROTECTED)
     private Long id;
 
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    private UUID publicId;
+
     @Column(nullable = true)
     private String username;
 
@@ -50,6 +50,12 @@ public class User implements UserDetails{
     @Column(unique = true, nullable = false)
     private String email;
 
+    @PrePersist
+    private void generatePublicId() {
+        if (this.publicId == null) {
+            this.publicId = UUID.randomUUID();
+        }
+    }
 
     @Override
     public boolean equals (Object user) {

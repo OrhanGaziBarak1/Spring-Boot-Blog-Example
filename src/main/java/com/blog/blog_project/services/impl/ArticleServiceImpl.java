@@ -76,6 +76,7 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.toDTO(updatedArticle);
     }
 
+    @Transactional
     @Override
     public void delete(String id) {
         Article article = articleRepository.findById(id)
