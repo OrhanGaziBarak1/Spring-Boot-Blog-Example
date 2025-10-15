@@ -21,6 +21,11 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     List<Article> findByDeletedAtBetween(Date startDate, Date endDate);
 
     Optional<Article> findByIdAndIsDeletedFalse(String id);
+    Optional<Article> findByIdAndUserPublicIdAndIsDeletedFalse(String id, UUID userPublicId);
+
+    boolean existsByIdAndUserPublicIdAndIsDeletedFalse(String id, UUID userPublicId);
+    boolean existsByIdAndIsDeletedFalse(String id);
 
     Page <Article> findByUserPublicIdInAndIsDeletedFalseOrderByCreatedAtDesc(List<UUID> userPublicId, Pageable pageable);
+    Page <Article> findByIdInAndIsDeletedFalseOrderByCreatedAtDesc(List <String> articleIdList, Pageable pageable);
 }

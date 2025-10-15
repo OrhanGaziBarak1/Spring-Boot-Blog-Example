@@ -23,6 +23,7 @@ public interface ArticleService {
 
     PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size);
     PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicId, int page, int size);
+    PagedResponseDTO<ArticleDTO> getArticlesById(List<String> articleIdList, int page, int size);
 
     void checkAuthority(Long userId, String articleId);
 }

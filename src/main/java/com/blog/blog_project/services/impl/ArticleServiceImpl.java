@@ -72,6 +72,14 @@ public class ArticleServiceImpl implements ArticleService {
         return PagedResponseDTO.from(articles, articleDTOS);
     }
 
+    @Override
+    public PagedResponseDTO<ArticleDTO> getArticlesById(List<String> articleIdList, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page <Article> articles = articleRepository.findByIdInAndIsDeletedFalseOrderByCreatedAtDesc(articleIdList, pageable);
+        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent());
+        return PagedResponseDTO.from(articles, articleDTOS);
+    }
+
     @Transactional
     @Override
     public ArticleDTO update(ArticleUpdateDTO request, String id) {
