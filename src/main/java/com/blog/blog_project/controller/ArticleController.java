@@ -22,8 +22,10 @@ public class ArticleController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create (@Valid @RequestBody ArticleCreateDTO request) {
-        ArticleDTO response = articleService.create(request);
+    public ResponseEntity<?> create (
+            @Valid @RequestBody ArticleCreateDTO request,
+            @AuthenticationPrincipal User currentUser) {
+        ArticleDTO response = articleService.create(request, currentUser.getPublicId());
         return ResponseEntity.ok(response);
     }
 

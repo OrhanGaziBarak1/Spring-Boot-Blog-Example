@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, String> {
     Page<Article> findByAuthorId(long authorId, Pageable pageable);
@@ -20,4 +21,6 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     List<Article> findByDeletedAtBetween(Date startDate, Date endDate);
 
     Optional<Article> findByIdAndIsDeletedFalse(String id);
+
+    Page <Article> findByUserPublicIdInAndIsDeletedFalseOrderByCreatedAtDesc(List<UUID> userPublicId, Pageable pageable);
 }

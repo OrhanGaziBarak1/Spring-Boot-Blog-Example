@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +18,9 @@ public class ArticleCreateDTO {
     @NotNull(message = "Author id cannot be blank!")
     @Positive(message = "Author id must be positive!")
     private long authorId;
+
+    @NotNull(message = "Public ID field can not being blank!")
+    private UUID userPublicId;
 
     @NotBlank(message = "Content can not being blank!")
     @NoCode

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -15,4 +16,5 @@ public class ArticleDTO {
     private Date createdAt;
     private Date updatedAt;
     private long authorId;
+    private UUID userPublicId;
 }

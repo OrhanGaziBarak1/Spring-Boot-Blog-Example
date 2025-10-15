@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -52,6 +53,12 @@ public class FollowServiceImpl implements FollowService {
         ).orElseThrow(() -> new FollowshipNotFoundException(userPublicId, followedUserPublicId));
 
         followRepository.delete(followship);
+    }
+
+    @Override
+    public List<UUID> getFollowedUsers(UUID userPublicId) {
+        List <Follow> follows = followRepository.findByUserPublicId(userPublicId);
+        return follows.stream().map(Follow::getFollowedUserPublicId).toList();
     }
 
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +33,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public ArticleDTO create(ArticleCreateDTO request) {
+    public ArticleDTO create(ArticleCreateDTO request, UUID userPublicId) {
         Article article = new Article();
 
         article.setContent(request.getContent());
         article.setAuthorId(request.getAuthorId());
         article.setCreatedAt(new Date());
+        article.setUserPublicId(userPublicId);
 
         Article savedArticle = articleRepository.save(article);
 
@@ -60,6 +62,14 @@ public class ArticleServiceImpl implements ArticleService {
         List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent());
 
         return PagedResponseDTO.from(articles, articleDTOList);
+    }
+
+    @Override
+    public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicIdList, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page <Article> articles = articleRepository.findByUserPublicIdInAndIsDeletedFalseOrderByCreatedAtDesc(userPublicIdList, pageable);
+        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent());
+        return PagedResponseDTO.from(articles, articleDTOS);
     }
 
     @Transactional

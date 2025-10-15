@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "article")
@@ -23,6 +24,9 @@ public class Article {
 
     @Column(nullable = false)
     private long authorId;
+
+    @Column(nullable = false, updatable = false, name = "user_public_id")
+    private UUID userPublicId;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
