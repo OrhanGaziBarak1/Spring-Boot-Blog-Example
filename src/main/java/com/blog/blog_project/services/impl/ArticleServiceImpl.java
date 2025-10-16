@@ -9,6 +9,7 @@ import com.blog.blog_project.exception.ArticleNotFoundException;
 import com.blog.blog_project.exception.UnauthorizedArticleAccessException;
 import com.blog.blog_project.mapper.ArticleMapper;
 import com.blog.blog_project.repository.ArticleRepository;
+import com.blog.blog_project.repository.ClapRepository;
 import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.ArticleService;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final ArticleMapper articleMapper;
+    private final ClapRepository clapRepository;
 
     @Transactional
     @Override
@@ -43,13 +45,13 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article savedArticle = articleRepository.save(article);
 
-        return articleMapper.toDTO(savedArticle);
+        return articleMapper.toDTO(savedArticle, clapRepository);
     }
 
     @Override
     public ArticleDTO getOne(String id) {
         return articleRepository.findByIdAndIsDeletedFalse(id)
-                .map(articleMapper::toDTO)
+                .map(article -> articleMapper.toDTO(article, clapRepository))
                 .orElseThrow(() -> new ArticleNotFoundException(id));
     }
 
@@ -59,7 +61,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
 
-        List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent());
+        List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent(), clapRepository);
 
         return PagedResponseDTO.from(articles, articleDTOList);
     }
@@ -68,7 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicIdList, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page <Article> articles = articleRepository.findByUserPublicIdInAndIsDeletedFalseOrderByCreatedAtDesc(userPublicIdList, pageable);
-        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent());
+        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent(), clapRepository);
         return PagedResponseDTO.from(articles, articleDTOS);
     }
 
@@ -76,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PagedResponseDTO<ArticleDTO> getArticlesById(List<String> articleIdList, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page <Article> articles = articleRepository.findByIdInAndIsDeletedFalseOrderByCreatedAtDesc(articleIdList, pageable);
-        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent());
+        List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent(), clapRepository);
         return PagedResponseDTO.from(articles, articleDTOS);
     }
 
@@ -91,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article updatedArticle = articleRepository.save(article);
 
-        return articleMapper.toDTO(updatedArticle);
+        return articleMapper.toDTO(updatedArticle, clapRepository);
     }
 
     @Transactional

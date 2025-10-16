@@ -37,3 +37,9 @@ databaseChangeLog:
 
  - include:
      file: db/changelog/changesets/changeset-20251015-1335.sql
+
+ - include:
+     file: db/changelog/changesets/changeset-20251016-0939.sql
+
+ - include:
+     file: db/changelog/changesets/changeset-20251016-1245.sql

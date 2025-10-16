@@ -17,4 +17,5 @@ public class ArticleDTO {
     private Date updatedAt;
     private long authorId;
     private UUID userPublicId;
+    private Integer clapCount;
 }
