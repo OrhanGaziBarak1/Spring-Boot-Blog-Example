@@ -14,22 +14,23 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/articles")
 @RequiredArgsConstructor
 public class ArticleController {
 
     private final ArticleService articleService;
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create (
+  //SOLID
+  @PostMapping()
+    public ResponseEntity<ArticleDTO> create (
             @Valid @RequestBody ArticleCreateDTO request,
-            @AuthenticationPrincipal User currentUser) {
+            @AuthenticationPrincipal User currentUser) { // TODO: use UUID instead of User entity
         ArticleDTO response = articleService.create(request, currentUser.getPublicId());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/get-articles")
+    @GetMapping()
     public ResponseEntity<?> getArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -39,7 +40,7 @@ public class ArticleController {
         return ResponseEntity.ok(articles);
     }
 
-    @GetMapping("/get-articles/{id}")
+    @GetMapping("/author/{id}")
     public ResponseEntity<?> getArticlesByAuthor(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -61,7 +62,7 @@ public class ArticleController {
             @Valid @RequestBody ArticleUpdateDTO request,
             @AuthenticationPrincipal User currentUser
     ) {
-        articleService.checkAuthority(currentUser.getId(), id);
+        articleService.checkAuthority(currentUser.getId(), id); //tek bir method daha iyi olur
         ArticleDTO response = articleService.update(request, id);
         return ResponseEntity.ok(response);
     }
