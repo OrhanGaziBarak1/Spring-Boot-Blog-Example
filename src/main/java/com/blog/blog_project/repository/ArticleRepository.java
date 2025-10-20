@@ -11,18 +11,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, String> {
-    Page<Article> findByAuthorId(long authorId, Pageable pageable);
+
     Page<Article> findByAuthorIdAndIsDeletedFalse(long authorId, Pageable pageable);
-    List<Article> findByIsDeletedFalse();
-    List<Article> findByIsDeletedTrue();
-
-    List<Article> findByCreatedAtBetween(Date startDate, Date endDate);
-    List<Article> findByUpdatedAtBetween(Date startDate, Date endDate);
-    List<Article> findByDeletedAtBetween(Date startDate, Date endDate);
-
     Optional<Article> findByIdAndIsDeletedFalse(String id);
-    Optional<Article> findByIdAndUserPublicIdAndIsDeletedFalse(String id, UUID userPublicId);
-
     boolean existsByIdAndUserPublicIdAndIsDeletedFalse(String id, UUID userPublicId);
     boolean existsByIdAndIsDeletedFalse(String id);
 

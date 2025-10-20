@@ -15,7 +15,7 @@ import java.util.List;
 public interface ArticleMapper {
 
     @Mapping(target = "clapCount", ignore = true)
-    ArticleDTO toDTO(Article article, @Context ClapRepository clapRepository);
+    ArticleDTO toDTO(Article article, @Context ClapRepository clapRepository); //repo silinmeli
     @Mapping(target = "clapCount", ignore = true)
     List<ArticleDTO> toDTOList(List<Article> articles, @Context ClapRepository clapRepository);
 

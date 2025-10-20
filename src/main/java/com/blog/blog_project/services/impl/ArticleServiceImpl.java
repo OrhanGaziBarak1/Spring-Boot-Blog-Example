@@ -10,7 +10,6 @@ import com.blog.blog_project.exception.UnauthorizedArticleAccessException;
 import com.blog.blog_project.mapper.ArticleMapper;
 import com.blog.blog_project.repository.ArticleRepository;
 import com.blog.blog_project.repository.ClapRepository;
-import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.ArticleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +28,9 @@ import java.util.UUID;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
     private final ArticleMapper articleMapper;
     private final ClapRepository clapRepository;
+    private static final String CREATED_AT = "created";
 
     @Transactional
     @Override
@@ -50,25 +49,24 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDTO getOne(String id) {
-        return articleRepository.findByIdAndIsDeletedFalse(id)
+        Long totalClapsForArticle = clapRepository.getTotalClapsForArticle(id);
+        return articleRepository.findByIdAndIsDeletedFalse(id) //TODO: clapRepository parametre olarak verilmemeli totalClapsForArticle kullanmalı
                 .map(article -> articleMapper.toDTO(article, clapRepository))
                 .orElseThrow(() -> new ArticleNotFoundException(id));
     }
 
     @Override
     public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_AT).descending());
         Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
-
         List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent(), clapRepository);
-
         return PagedResponseDTO.from(articles, articleDTOList);
     }
 
     @Override
     public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicIdList, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_AT).descending());
         Page <Article> articles = articleRepository.findByUserPublicIdInAndIsDeletedFalseOrderByCreatedAtDesc(userPublicIdList, pageable);
         List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent(), clapRepository);
         return PagedResponseDTO.from(articles, articleDTOS);
@@ -76,7 +74,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public PagedResponseDTO<ArticleDTO> getArticlesById(List<String> articleIdList, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_AT).descending());
         Page <Article> articles = articleRepository.findByIdInAndIsDeletedFalseOrderByCreatedAtDesc(articleIdList, pageable);
         List <ArticleDTO> articleDTOS = articleMapper.toDTOList(articles.getContent(), clapRepository);
         return PagedResponseDTO.from(articles, articleDTOS);
