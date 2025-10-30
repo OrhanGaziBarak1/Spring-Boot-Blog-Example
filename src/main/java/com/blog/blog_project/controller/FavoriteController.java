@@ -35,7 +35,7 @@ public class FavoriteController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<?> getFavorites(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

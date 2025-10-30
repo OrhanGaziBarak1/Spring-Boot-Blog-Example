@@ -21,7 +21,7 @@ public class ArticleController {
     private final ArticleService articleService;
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> create (
             @Valid @RequestBody ArticleCreateDTO request,
             @AuthenticationPrincipal User currentUser) {
@@ -29,7 +29,7 @@ public class ArticleController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/get-articles")
+    @GetMapping()
     public ResponseEntity<?> getArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -39,40 +39,40 @@ public class ArticleController {
         return ResponseEntity.ok(articles);
     }
 
-    @GetMapping("/get-articles/{id}")
+    @GetMapping("/author/{authorId}")
     public ResponseEntity<?> getArticlesByAuthor(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @PathVariable Long id) {
-        authenticationService.checkAuthor(id);
-        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(id, page, size);
+            @PathVariable Long authorId) {
+        authenticationService.checkAuthor(authorId);
+        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(authorId, page, size);
         return ResponseEntity.ok(articles);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable String id) {
-        ArticleDTO response = articleService.getOne(id);
+    @GetMapping("/{articleId}")
+    public ResponseEntity<?> getOne(@PathVariable String articleId) {
+        ArticleDTO response = articleService.getOne(articleId);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{articleId}")
     public ResponseEntity<?> updateArticle(
-            @PathVariable String id,
+            @PathVariable String articleId,
             @Valid @RequestBody ArticleUpdateDTO request,
             @AuthenticationPrincipal User currentUser
     ) {
-        articleService.checkAuthority(currentUser.getId(), id);
-        ArticleDTO response = articleService.update(request, id);
+        articleService.checkAuthority(currentUser.getId(), articleId);
+        ArticleDTO response = articleService.update(request, articleId);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{articleId}")
     public ResponseEntity<?> delete(
-            @PathVariable String id,
+            @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {
-        articleService.checkAuthority(currentUser.getId(), id);
-        articleService.delete(id);
+        articleService.checkAuthority(currentUser.getId(), articleId);
+        articleService.delete(articleId);
         return ResponseEntity.ok().build();
     }
 }
