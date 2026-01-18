@@ -16,7 +16,7 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("/{publicId}")
-    public ResponseEntity<?> follow(
+    public ResponseEntity<Void> follow(
             @PathVariable UUID publicId,
             @AuthenticationPrincipal User currentUser
             ) {
@@ -25,7 +25,7 @@ public class FollowController {
     }
 
     @DeleteMapping("/{publicId}")
-    public ResponseEntity<?> unfollow(
+    public ResponseEntity<Void> unfollow(
             @PathVariable UUID publicId,
             @AuthenticationPrincipal User currentUser
     ) {

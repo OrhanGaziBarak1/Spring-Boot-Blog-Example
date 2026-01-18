@@ -22,15 +22,14 @@ public class ArticleController {
     private final AuthenticationService authenticationService;
 
     @PostMapping()
-    public ResponseEntity<?> create (
-            @Valid @RequestBody ArticleCreateDTO request,
-            @AuthenticationPrincipal User currentUser) {
-        ArticleDTO response = articleService.create(request, currentUser.getPublicId());
+    public ResponseEntity<ArticleDTO> create (
+            @Valid @RequestBody ArticleCreateDTO request) {
+        ArticleDTO response = articleService.create(request);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping()
-    public ResponseEntity<?> getArticles(
+    public ResponseEntity<PagedResponseDTO<ArticleDTO>> getArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal User currentUser) {
@@ -40,7 +39,7 @@ public class ArticleController {
     }
 
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<?> getArticlesByAuthor(
+    public ResponseEntity<PagedResponseDTO<ArticleDTO>> getArticlesByAuthor(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @PathVariable Long authorId) {
@@ -50,13 +49,13 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    public ResponseEntity<?> getOne(@PathVariable String articleId) {
+    public ResponseEntity<ArticleDTO> getOne(@PathVariable String articleId) {
         ArticleDTO response = articleService.getOne(articleId);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{articleId}")
-    public ResponseEntity<?> updateArticle(
+    public ResponseEntity<ArticleDTO> updateArticle(
             @PathVariable String articleId,
             @Valid @RequestBody ArticleUpdateDTO request,
             @AuthenticationPrincipal User currentUser
@@ -67,7 +66,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<?> delete(
+    public ResponseEntity<Void> delete(
             @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {

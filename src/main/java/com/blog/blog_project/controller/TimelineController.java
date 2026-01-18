@@ -20,7 +20,7 @@ public class TimelineController {
     private final TimelineService timelineService;
 
     @GetMapping()
-    public ResponseEntity<?> getTimeline(
+    public ResponseEntity<PagedResponseDTO<ArticleDTO>> getTimeline(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal User currentUser

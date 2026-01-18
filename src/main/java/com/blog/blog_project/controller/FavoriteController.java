@@ -17,7 +17,7 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PostMapping("/{articleId}")
-    public ResponseEntity<?> favorite(
+    public ResponseEntity<Void> favorite(
             @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {
@@ -26,7 +26,7 @@ public class FavoriteController {
     }
 
     @DeleteMapping("/{articleId}")
-    public  ResponseEntity<?> unfavorite(
+    public  ResponseEntity<Void> unfavorite(
             @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {
@@ -35,7 +35,7 @@ public class FavoriteController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getFavorites(
+    public ResponseEntity<PagedResponseDTO<ArticleDTO>> getFavorites(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal User currentUser

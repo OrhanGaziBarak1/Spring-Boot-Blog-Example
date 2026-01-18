@@ -17,7 +17,7 @@ public class ClapController {
     private final ClapService clapService;
 
     @PostMapping("/{articleId}")
-    public ResponseEntity<?> clap(
+    public ResponseEntity<Void> clap(
             @PathVariable String articleId,
             @Valid @RequestBody ClapDTO request,
             @AuthenticationPrincipal User currentUser
@@ -27,7 +27,7 @@ public class ClapController {
     }
 
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<?> deleteClap(
+    public ResponseEntity<Void> deleteClap(
             @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {
