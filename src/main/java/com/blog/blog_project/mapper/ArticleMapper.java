@@ -1,5 +1,6 @@
 package com.blog.blog_project.mapper;
 
+import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
 import com.blog.blog_project.entity.Article;
 import com.blog.blog_project.repository.ClapRepository;
@@ -18,6 +19,13 @@ public interface ArticleMapper {
     ArticleDTO toDTO(Article article, @Context ClapRepository clapRepository);
     @Mapping(target = "clapCount", ignore = true)
     List<ArticleDTO> toDTOList(List<Article> articles, @Context ClapRepository clapRepository);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    Article toEntity(ArticleCreateDTO request);
 
     @AfterMapping
     default void afterMapping(@MappingTarget ArticleDTO dto, Article article, @Context ClapRepository clapRepository) {

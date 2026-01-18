@@ -10,7 +10,6 @@ import com.blog.blog_project.exception.UnauthorizedArticleAccessException;
 import com.blog.blog_project.mapper.ArticleMapper;
 import com.blog.blog_project.repository.ArticleRepository;
 import com.blog.blog_project.repository.ClapRepository;
-import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.ArticleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +33,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public ArticleDTO create(ArticleCreateDTO request, UUID userPublicId) {
-        Article article = new Article();
-
-        article.setContent(request.getContent());
-        article.setAuthorId(request.getAuthorId());
-        article.setCreatedAt(new Date());
-        article.setUserPublicId(userPublicId);
-
+    public ArticleDTO create(ArticleCreateDTO request) {
+        Article article = articleMapper.toEntity(request);
         Article savedArticle = articleRepository.save(article);
-
         return articleMapper.toDTO(savedArticle, clapRepository);
     }
 
@@ -57,11 +49,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-
         Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
-
         List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent(), clapRepository);
-
         return PagedResponseDTO.from(articles, articleDTOList);
     }
 
@@ -86,12 +75,9 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleDTO update(ArticleUpdateDTO request, String id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ArticleNotFoundException(id));
-
         article.setContent(request.getContent());
         article.setUpdatedAt(new Date());
-
         Article updatedArticle = articleRepository.save(article);
-
         return articleMapper.toDTO(updatedArticle, clapRepository);
     }
 
@@ -100,10 +86,8 @@ public class ArticleServiceImpl implements ArticleService {
     public void delete(String id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(()->new ArticleNotFoundException(id));
-
         article.setDeleted(true);
         article.setDeletedAt(new Date());
-
         articleRepository.save(article);
     }
 

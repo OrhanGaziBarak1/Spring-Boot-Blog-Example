@@ -4,6 +4,7 @@ import com.blog.blog_project.dto.ArticleCreateDTO;
 import com.blog.blog_project.dto.ArticleDTO;
 import com.blog.blog_project.dto.ArticleUpdateDTO;
 import com.blog.blog_project.dto.PagedResponseDTO;
+
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public interface ArticleService {
     @Transactional
-    ArticleDTO create(ArticleCreateDTO request, UUID userPublicId);
+    ArticleDTO create(ArticleCreateDTO request);
 
     @Transactional
     ArticleDTO update(ArticleUpdateDTO request, String id);
