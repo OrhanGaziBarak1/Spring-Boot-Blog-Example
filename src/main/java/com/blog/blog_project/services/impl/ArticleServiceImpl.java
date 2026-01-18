@@ -29,7 +29,6 @@ import java.util.UUID;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
     private final ArticleMapper articleMapper;
     private final ClapRepository clapRepository;
 

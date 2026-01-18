@@ -2,8 +2,6 @@ package com.blog.blog_project.repository;
 
 import com.blog.blog_project.entity.Favorite;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;

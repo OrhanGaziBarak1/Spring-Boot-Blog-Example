@@ -3,7 +3,6 @@ package com.blog.blog_project.controller;
 import com.blog.blog_project.dto.ArticleDTO;
 import com.blog.blog_project.dto.PagedResponseDTO;
 import com.blog.blog_project.entity.User;
-import com.blog.blog_project.services.ArticleService;
 import com.blog.blog_project.services.TimelineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.blog.blog_project.dto.AuthenticationDTO;
 import com.blog.blog_project.dto.LoginDTO;
 import com.blog.blog_project.dto.RegisterDTO;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

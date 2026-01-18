@@ -5,7 +5,6 @@ import com.blog.blog_project.dto.PagedResponseDTO;
 import com.blog.blog_project.entity.User;
 import com.blog.blog_project.services.FavoriteService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
