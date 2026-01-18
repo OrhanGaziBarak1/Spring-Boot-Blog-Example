@@ -43,3 +43,6 @@ databaseChangeLog:
 
  - include:
      file: db/changelog/changesets/changeset-20251016-1245.sql
+
+ - include:
+     file: db/changelog/changesets/changeset-2025-18-01-2235.sql
