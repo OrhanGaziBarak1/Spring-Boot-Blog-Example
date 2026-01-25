@@ -5,6 +5,7 @@ import com.blog.blog_project.dto.LoginDTO;
 import com.blog.blog_project.dto.RegisterDTO;
 import com.blog.blog_project.entity.User;
 import com.blog.blog_project.exception.AuthorNotFoundException;
+import com.blog.blog_project.mapper.AuthenticationMapper;
 import com.blog.blog_project.repository.UserRepository;
 import com.blog.blog_project.services.AuthenticationService;
 import com.blog.blog_project.services.JwtService;
@@ -25,6 +26,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final AuthenticationMapper authenticationMapper;
 
     @Transactional
     @Override
@@ -41,12 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser);
 
-        return new AuthenticationDTO(
-                savedUser.getFullName(),
-                savedUser.getEmail(),
-                token,
-                savedUser.getPublicId()
-        );
+        return authenticationMapper.toDto(savedUser, token);
     }
 
     @Override
@@ -57,17 +54,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.getPassword()
                 )
         );
-
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AuthorNotFoundException(request.getEmail()));
-
         String token = jwtService.generateToken(user);
-
-        return new AuthenticationDTO(
-                user.getFullName(),
-                user.getEmail(),
-                token,
-                user.getPublicId()
-        );
+        return authenticationMapper.toDto(user, token);
     }
 
     @Override
