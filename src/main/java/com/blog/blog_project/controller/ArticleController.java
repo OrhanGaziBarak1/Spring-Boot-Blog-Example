@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/article")
 @RequiredArgsConstructor
@@ -33,18 +35,18 @@ public class ArticleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal User currentUser) {
-        Long userId = currentUser.getId();
-        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(userId, page, size);
+        UUID userPublicId = currentUser.getPublicId();
+        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(userPublicId, page, size);
         return ResponseEntity.ok(articles);
     }
 
-    @GetMapping("/author/{authorId}")
+    @GetMapping("/author/{userPublicId}")
     public ResponseEntity<PagedResponseDTO<ArticleDTO>> getArticlesByAuthor(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @PathVariable Long authorId) {
-        authenticationService.checkAuthor(authorId);
-        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(authorId, page, size);
+            @PathVariable UUID userPublicId) {
+        authenticationService.checkAuthor(userPublicId);
+        PagedResponseDTO<ArticleDTO> articles = articleService.getArticlesByAuthor(userPublicId, page, size);
         return ResponseEntity.ok(articles);
     }
 
@@ -60,7 +62,7 @@ public class ArticleController {
             @Valid @RequestBody ArticleUpdateDTO request,
             @AuthenticationPrincipal User currentUser
     ) {
-        articleService.checkAuthority(currentUser.getId(), articleId);
+        articleService.checkAuthority(currentUser.getPublicId(), articleId);
         ArticleDTO response = articleService.update(request, articleId);
         return ResponseEntity.ok(response);
     }
@@ -70,7 +72,7 @@ public class ArticleController {
             @PathVariable String articleId,
             @AuthenticationPrincipal User currentUser
     ) {
-        articleService.checkAuthority(currentUser.getId(), articleId);
+        articleService.checkAuthority(currentUser.getPublicId(), articleId);
         articleService.delete(articleId);
         return ResponseEntity.ok().build();
     }

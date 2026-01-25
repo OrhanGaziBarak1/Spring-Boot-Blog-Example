@@ -22,9 +22,6 @@ public class Article {
     @Setter(AccessLevel.PROTECTED)
     private String id;
 
-    @Column(nullable = false)
-    private long authorId;
-
     @Column(nullable = false, updatable = false, name = "user_public_id")
     private UUID userPublicId;
 
@@ -47,6 +44,6 @@ public class Article {
 
     @Override
     public String toString() {
-        return "ID: %s\nAuthor: %d\nContent: %s".formatted(this.id, this.authorId, this.content);
+        return "ID: %s\nAuthor: %d\nContent: %s".formatted(this.id, this.userPublicId, this.content);
     }
 }

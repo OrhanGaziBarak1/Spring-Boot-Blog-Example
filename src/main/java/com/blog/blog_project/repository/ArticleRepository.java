@@ -11,8 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, String> {
-    Page<Article> findByAuthorId(long authorId, Pageable pageable);
-    Page<Article> findByAuthorIdAndIsDeletedFalse(long authorId, Pageable pageable);
+    Page<Article> findByUserPublicIdAndIsDeletedFalse(UUID userPublicId, Pageable pageable);
     List<Article> findByIsDeletedFalse();
     List<Article> findByIsDeletedTrue();
 

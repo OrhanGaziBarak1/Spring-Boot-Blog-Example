@@ -13,9 +13,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleCreateDTO {
-    @NotNull(message = "Author id cannot be blank!")
-    private long authorId;
-
     @NotNull(message = "Public ID field can not being blank!")
     private UUID userPublicId;
 

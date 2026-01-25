@@ -15,6 +15,11 @@
 			"key": "token",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "userPublicId",
+			"value": "",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -31,6 +36,7 @@
 									"if (pm.response.code === 200 || pm.response.code === 201) {",
 									"    var jsonData = pm.response.json();",
 									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    pm.collectionVariables.set(\"userPublicId\", jsonData.publicId);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -54,7 +60,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["users", "register"]
 						},
-						"description": "Register a new user. Password must be 8-16 characters, alphanumeric only."
+						"description": "Register a new user. Password must be 8-16 characters, alphanumeric only. Returns token and publicId (UUID)."
 					},
 					"response": []
 				},
@@ -68,6 +74,7 @@
 									"if (pm.response.code === 200) {",
 									"    var jsonData = pm.response.json();",
 									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    pm.collectionVariables.set(\"userPublicId\", jsonData.publicId);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -91,7 +98,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["users", "login"]
 						},
-						"description": "Login with email and password. Returns JWT token."
+						"description": "Login with email and password. Returns JWT token and publicId (UUID)."
 					},
 					"response": []
 				}
@@ -123,14 +130,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"authorId\": 1,\n    \"userPublicId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"content\": \"My first blog post content here.\"\n}"
+							"raw": "{\n    \"userPublicId\": \"{{userPublicId}}\",\n    \"content\": \"My first blog post content here.\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/article",
 							"host": ["{{baseUrl}}"],
 							"path": ["article"]
 						},
-						"description": "Create a new article. Content cannot contain code blocks."
+						"description": "Create a new article. Content cannot contain code blocks. userPublicId is automatically set from login/register."
 					},
 					"response": []
 				},
@@ -171,12 +178,22 @@
 				{
 					"name": "Get Articles by Author",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/article/author/1?page=0&size=10",
+							"raw": "{{baseUrl}}/article/author/{{userPublicId}}?page=0&size=10",
 							"host": ["{{baseUrl}}"],
-							"path": ["article", "author", "1"],
+							"path": ["article", "author", "{{userPublicId}}"],
 							"query": [
 								{
 									"key": "page",
@@ -188,7 +205,7 @@
 								}
 							]
 						},
-						"description": "Get articles by a specific author ID. Public endpoint - no auth required."
+						"description": "Get articles by a specific author's publicId (UUID). Public endpoint - no auth required."
 					},
 					"response": []
 				},

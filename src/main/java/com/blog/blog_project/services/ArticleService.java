@@ -22,9 +22,9 @@ public interface ArticleService {
 
     ArticleDTO getOne(String id);
 
-    PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size);
-    PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicId, int page, int size);
+    PagedResponseDTO<ArticleDTO> getArticlesByAuthor(UUID userPublicId, int page, int size);
+    PagedResponseDTO<ArticleDTO> getArticlesByAuthor(List<UUID> userPublicIdList, int page, int size);
     PagedResponseDTO<ArticleDTO> getArticlesById(List<String> articleIdList, int page, int size);
 
-    void checkAuthority(Long userId, String articleId);
+    void checkAuthority(UUID userPublicId, String articleId);
 }

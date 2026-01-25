@@ -5,11 +5,13 @@ import com.blog.blog_project.dto.LoginDTO;
 import com.blog.blog_project.dto.RegisterDTO;
 import jakarta.transaction.Transactional;
 
+import java.util.UUID;
+
 public interface AuthenticationService {
     @Transactional
     AuthenticationDTO register(RegisterDTO request);
 
     AuthenticationDTO login(LoginDTO request);
 
-    void checkAuthor(Long id);
+    void checkAuthor(UUID userPublicId);
 }

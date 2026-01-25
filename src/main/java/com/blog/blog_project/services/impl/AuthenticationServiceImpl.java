@@ -15,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -42,7 +44,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return new AuthenticationDTO(
                 savedUser.getFullName(),
                 savedUser.getEmail(),
-                token
+                token,
+                savedUser.getPublicId()
         );
     }
 
@@ -62,13 +65,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return new AuthenticationDTO(
                 user.getFullName(),
                 user.getEmail(),
-                token
+                token,
+                user.getPublicId()
         );
-
     }
 
     @Override
-    public void checkAuthor(Long id) {
-        if (!(userRepository.existsById(id))) throw new AuthorNotFoundException(id);
+    public void checkAuthor(UUID userPublicId) {
+        if (!(userRepository.existsByPublicId(userPublicId))) throw new AuthorNotFoundException(userPublicId);
     }
 }

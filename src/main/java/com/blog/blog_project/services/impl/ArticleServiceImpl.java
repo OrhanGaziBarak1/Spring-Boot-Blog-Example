@@ -47,9 +47,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(long authorId, int page, int size) {
+    public PagedResponseDTO<ArticleDTO> getArticlesByAuthor(UUID userPublicId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Article> articles = articleRepository.findByAuthorIdAndIsDeletedFalse(authorId, pageable);
+        Page<Article> articles = articleRepository.findByUserPublicIdAndIsDeletedFalse(userPublicId, pageable);
         List<ArticleDTO> articleDTOList = articleMapper.toDTOList(articles.getContent(), clapRepository);
         return PagedResponseDTO.from(articles, articleDTOList);
     }
@@ -92,10 +92,10 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void checkAuthority(Long userId, String articleId) {
+    public void checkAuthority(UUID userPublicId, String articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new ArticleNotFoundException(articleId));
-        if (article.getAuthorId() != userId) throw new UnauthorizedArticleAccessException(articleId);
+        if (!article.getUserPublicId().equals(userPublicId)) throw new UnauthorizedArticleAccessException(articleId);
     }
 
 }
