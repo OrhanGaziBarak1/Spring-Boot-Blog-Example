@@ -17,8 +17,12 @@ public interface ArticleMapper {
 
     @Mapping(target = "clapCount", ignore = true)
     ArticleDTO toDTO(Article article, @Context ClapRepository clapRepository);
-    @Mapping(target = "clapCount", ignore = true)
-    List<ArticleDTO> toDTOList(List<Article> articles, @Context ClapRepository clapRepository);
+
+    default List<ArticleDTO> toDTOList(List<Article> articles, @Context ClapRepository clapRepository) {
+        return articles.stream()
+                .map(article -> toDTO(article, clapRepository))
+                .toList();
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

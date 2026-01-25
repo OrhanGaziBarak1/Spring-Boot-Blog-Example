@@ -27,6 +27,9 @@ databaseChangeLog:
      file: db/changelog/changesets/changeset-20251014-0928.sql
 
  - include:
+     file: db/changelog/changesets/changeset-20251014-1200.sql
+
+ - include:
      file: db/changelog/changesets/changeset-20251014-1225.sql
 
  - include:

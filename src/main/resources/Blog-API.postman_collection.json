@@ -1,0 +1,569 @@
+{
+	"info": {
+		"_postman_id": "blog-api-collection",
+		"name": "Blog API",
+		"description": "RESTful social blogging platform API - Spring Boot 3.5.6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"Password123\",\n    \"fullName\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "register"]
+						},
+						"description": "Register a new user. Password must be 8-16 characters, alphanumeric only."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"Password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "login"]
+						},
+						"description": "Login with email and password. Returns JWT token."
+					},
+					"response": []
+				}
+			],
+			"description": "User registration and login endpoints. Public - no authentication required."
+		},
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "Create Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"authorId\": 1,\n    \"userPublicId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"content\": \"My first blog post content here.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/article",
+							"host": ["{{baseUrl}}"],
+							"path": ["article"]
+						},
+						"description": "Create a new article. Content cannot contain code blocks."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Articles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/article?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["article"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get articles of the authenticated user. Paginated response."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Articles by Author",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/article/author/1?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", "author", "1"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get articles by a specific author ID. Public endpoint - no auth required."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Article by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/article/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Get a single article by its ID. Public endpoint - no auth required."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"Updated article content here.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/article/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Update an article. Only the author can update their own article."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/article/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["article", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Soft delete an article. Only the author can delete their own article."
+					},
+					"response": []
+				}
+			],
+			"description": "Article CRUD operations. Some endpoints require authentication."
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Favorite Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["favorite", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Add an article to favorites."
+					},
+					"response": []
+				},
+				{
+					"name": "Unfavorite Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["favorite", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Remove an article from favorites."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Favorites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["favorite"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all favorited articles for the authenticated user. Paginated response."
+					},
+					"response": []
+				}
+			],
+			"description": "Favorite/unfavorite articles. All endpoints require authentication."
+		},
+		{
+			"name": "Follow",
+			"item": [
+				{
+					"name": "Follow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/follow/:publicId",
+							"host": ["{{baseUrl}}"],
+							"path": ["follow", ":publicId"],
+							"variable": [
+								{
+									"key": "publicId",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Follow a user by their public UUID."
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/follow/:publicId",
+							"host": ["{{baseUrl}}"],
+							"path": ["follow", ":publicId"],
+							"variable": [
+								{
+									"key": "publicId",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Unfollow a user by their public UUID."
+					},
+					"response": []
+				}
+			],
+			"description": "Follow/unfollow users. All endpoints require authentication."
+		},
+		{
+			"name": "Claps",
+			"item": [
+				{
+					"name": "Clap for Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"newClap\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clap/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["clap", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Add claps to an article. Each user can give 0-50 claps per article. newClap value must be 1-50."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Clap",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clap/:articleId",
+							"host": ["{{baseUrl}}"],
+							"path": ["clap", ":articleId"],
+							"variable": [
+								{
+									"key": "articleId",
+									"value": "article-uuid-here"
+								}
+							]
+						},
+						"description": "Remove all claps from an article."
+					},
+					"response": []
+				}
+			],
+			"description": "Clap for articles (similar to Medium). All endpoints require authentication."
+		},
+		{
+			"name": "Timeline",
+			"item": [
+				{
+					"name": "Get Timeline",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/timeline?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["timeline"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get articles from followed users. Paginated response."
+					},
+					"response": []
+				}
+			],
+			"description": "Timeline feed from followed users. Requires authentication."
+		}
+	]
+}
