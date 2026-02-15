@@ -39,6 +39,12 @@ public class NoCodeValidator implements ConstraintValidator<NoCode, String> {
 
     @Override
     public boolean isValid(String content, ConstraintValidatorContext context) {
+        // Null değerleri geçerli kabul et (null kontrolü başka annotation'larla
+        // yapılmalı)
+        if (content == null) {
+            return true;
+        }
+
         // Her bir pattern'i kontrol et
         for (Pattern pattern : CODE_PATTERNS) {
             if (pattern.matcher(content).find()) {
